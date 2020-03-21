@@ -1,0 +1,42 @@
+// Place any CSS rules you want to apply on both iOS and Android here.
+// This is where the vast majority of your CSS code goes.
+
+@import 'material-design-icon';
+
+//Font icon
+.fa {
+   font-family: "FontAwesome", "Font Awesome";
+}
+
+.mdi {
+	font-family: "Material Icons", "MaterialIcons-Regular", "MaterialIcons"
+}
+
+.action-bar {
+	background-color: #ffffff;
+	border-color: #f5f5f5;
+	font-size: 20;
+}
+
+.color_blue {
+  color: #5bc0de;
+}
+.color_blue:focus,
+.color_blue.focus {
+  color: #31b0d5;
+}
+.color_blue:hover {
+	color: #31b0d5;
+}
+.color_blue:active,
+.color_blue.active {
+  color: #31b0d5;
+}
+.color_blue:active:hover,
+.color_blue.active:hover,
+.color_blue:active:focus,
+.color_blue.active:focus,
+.color_blue:active.focus,
+.color_blue.active.focus, {
+  color: #269abc;
+}
