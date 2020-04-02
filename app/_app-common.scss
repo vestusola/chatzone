@@ -4,12 +4,29 @@
 @import 'material-design-icon';
 
 //Font icon
-.fa {
-   font-family: "FontAwesome", "Font Awesome";
-}
+.material-icons {
+	font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
 
-.mdi {
-	font-family: "Material Icons", "MaterialIcons-Regular", "MaterialIcons"
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
 }
 
 .action-bar {
@@ -19,24 +36,24 @@
 }
 
 .color_blue {
-  color: #5bc0de;
+  color: #30bcff;
 }
 .color_blue:focus,
 .color_blue.focus {
-  color: #31b0d5;
+  color: #30bcff;
 }
 .color_blue:hover {
-	color: #31b0d5;
+	color: #30bcff;
 }
 .color_blue:active,
 .color_blue.active {
-  color: #31b0d5;
+  color: #30bcff;
 }
 .color_blue:active:hover,
 .color_blue.active:hover,
 .color_blue:active:focus,
 .color_blue.active:focus,
 .color_blue:active.focus,
-.color_blue.active.focus, {
-  color: #269abc;
+.color_blue.active.focus {
+  color: #30bcff;
 }

@@ -1,6 +1,6 @@
 <template>
   <StackLayout>
-    <ListView class="list-group" for="item in items" @itemTap="goToChat" seperatorColor="black" height="100%">
+    <ListView class="list-group" for="item in items" @itemTap="goToChat" separatorColor="black" height="100%">
       <v-template>
         <GridLayout rows="auto,auto" columns="auto,*,auto" class="list-group-item">
           <Image row="0" col="0" rowSpan="2" :src="item.image" class="thumb"></Image>
@@ -20,6 +20,7 @@
 <script>
   import axios from "axios";
   import Login from "./Login";
+  import Chat from './Chat';
   import ChatList from "./ChatList";
   import GroupList from "./GroupList";
   import People from "./People";
@@ -50,75 +51,64 @@
             text: "Where are you?",
             unread: 0,
             when: this.getTime(),
-            image: "~/images/avatar.png"
+            image: "~/images/user_1.jpg"
           },
           {
             fullname: "Jane Doe",
             text: "\u263A That\'s the point.",
             unread: 0,
             when: this.getTime(),
-            image: "~/images/avatar.png"
+            image: "~/images/user_2.jpg"
           },
           {
             fullname: "McCarthy Roland",
             text: "When are you coming to work?",
             unread: 6,
             when: this.getTime(),
-            image: "~/images/avatar.png"
+            image: "~/images/user_3.jpg"
           },
           {
             fullname: "Isabella Houston",
             text: "I will definately be there.",
             unread: 0,
             when: this.getTime(),
-            image: "~/images/avatar.png"
+            image: "~/images/user_4.jpg"
           },
           {
             fullname: "Immanuella Mikel",
             text: "Wow! That\'s fine by me.",
             unread: 0,
             when: this.getTime(),
-            image: "~/images/avatar.png"
+            image: "~/images/user_5.jpg"
           },
           {
             fullname: "Tribett John",
             text: "Will Real Madrid win this night?",
             unread: 1,
             when: this.getTime(),
-            image: "~/images/avatar.png"
+            image: "~/images/user_6.jpg"
           },
           {
             fullname: "James Richard",
             text: "Where are you?",
             unread: 26,
             when: this.getTime(),
-            image: "~/images/avatar.png"
+            image: "~/images/user_7.jpg"
           },
           {
             fullname: "Samuel Jackson",
             text: "Where are you?",
             unread: 1,
             when: this.getTime(),
-            image: "~/images/avatar.png"
+            image: "~/images/user_8.jpg"
           },
-          {
-            fullname: "James Fortune",
-            text: "Where are you?",
-            unread: 0,
-            when: this.getTime(),
-            image: "~/images/avatar.png"
-          },
-          {
-            fullname: "Stonebridge Theresa",
-            text: "Where are you?",
-            unread: 0,
-            when: this.getTime(),
-            image: "~/images/avatar.png"
-          }
         );
       },
       goToChat(args) {
-        alert('I am clicked ');
+        this.$emit("select", args.item);
+        this.$navigateTo(Chat, {
+          transition: "SlideRight"
+        })
       },
       checkAuthentication() {
         this.$store.dispatch("loadFromStorage");
@@ -188,7 +178,7 @@
     font-size: 11;
     padding-top: 2;
     border-radius: 50%;
-    background-color: #5bc0de;
+    background-color: #30bcff;
     margin-right: 5;
     text-align: center;
     min-width: 20;
@@ -200,7 +190,7 @@
     font-size: 11;
     padding-top: 2;
     border-radius: 50%;
-    background-color: #31b0d5;
+    background-color: #30bcff;
     margin-right: 5;
     text-align: center;
     min-width: 20;
@@ -211,7 +201,7 @@
     font-size: 11;
     padding-top: 2;
     border-radius: 50%;
-    background-color: #31b0d5;
+    background-color: #30bcff;
     margin-right: 5;
     text-align: center;
     min-width: 20;
@@ -227,7 +217,7 @@
     font-size: 11;
     padding-top: 2;
     border-radius: 50%;
-    background-color: #269abc;
+    background-color: #30bcff;
     margin-right: 5;
     text-align: center;
     min-width: 20;

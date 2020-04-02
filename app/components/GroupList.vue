@@ -1,6 +1,6 @@
 <template>
   <StackLayout>
-    <ListView class="list-group" for="item in items" @itemTap="goToGroupChat" seperatorColor="black" height="100%">
+    <ListView class="list-group" for="item in items" @itemTap="goToGroupChat" separatorColor="black" height="100%">
       <v-template>
         <GridLayout rows="auto,auto" columns="auto,*,auto" class="list-group-item">
           <Image row="0" col="0" rowSpan="2" :src="item.image" class="thumb"></Image>
@@ -50,7 +50,7 @@
             text: "Where are you?",
             unread: 0,
             when: this.getTime(),
-            image: "~/images/avatar.png"
+            image: "~/images/avatar_2.png"
           },
           {
             fullname: "Undespised Keys \u263A",

@@ -12,7 +12,7 @@ if (platform.device.os === platform.platformNames.ios) {
 }
 
 var api = {
-  url: `http://${nativePlatformLocalhost}:3000/api/v1`
+  url: `http://${nativePlatformLocalhost}:5000/api/v1`
 };
 
 module.exports = api;

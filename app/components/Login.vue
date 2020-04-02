@@ -44,8 +44,8 @@
               <Label class="login-span sign-up-label" @tap="toggleForm">
                 <FormattedString>
                   <Span v-if="isLoggingIn" text="Don't have an account?"></Span>
-                  <Span v-else text="Back to Login" class="login-label"></Span>
-                  <Span :text="isLoggingIn ? ' Sign Up' : ''" style="font-weight: bold; color: purple;"></Span>
+                  <Span v-else text="Already a member." class="login-label"></Span>
+                  <Span :text="isLoggingIn ? ' Sign Up' : ' Login Now!'" style="font-weight: bold; color: purple;"></Span>
                 </FormattedString>
               </Label>
 

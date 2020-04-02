@@ -1,19 +1,17 @@
 <template>
   <Page>
     <ActionBar class="action-bar">
-      <Label class="color_blue" text="ChatZone" horizontalAlignment="center" />
+      <Label style="color: #30bcff;" text="ChatZone" horizontalAlignment="center" />
       <ActionItem android.position="popup" text="New Group" />
       <ActionItem android.position="popup" @tap="goToSettings" text="Settings" />
+      <ActionItem android.position="popup" @tap="goToChat" text="Chat" />
     </ActionBar>
 
     <BottomNavigation selectedIndex="0">
       <TabStrip>
-        <TabStripItem title="Chats" class="material-icons" iconSource="res://ic_chat_black_24">
-        </TabStripItem>
-        <TabStripItem title="Groups" class="material-icons" iconSource="res://ic_forum_black_24">
-        </TabStripItem>
-        <TabStripItem title="People" class="material-icons" iconSource="res://ic_people_black_24">
-        </TabStripItem>
+        <TabStripItem title="Chats" class="material-icons" iconSource="res://ic_chat_black_24"></TabStripItem>
+        <TabStripItem title="Groups" class="material-icons" iconSource="res://ic_forum_black_24"></TabStripItem>
+        <TabStripItem title="People" class="material-icons" iconSource="res://ic_people_black_24"></TabStripItem>
       </TabStrip>
 
       <TabContentItem>
@@ -32,6 +30,7 @@
 <script>
 import axios from "axios";
 import Login from "./Login";
+import Chat from "./Chat";
 import ChatList from "./ChatList";
 import GroupList from "./GroupList";
 import People from "./People";
@@ -50,13 +49,16 @@ export default {
     Login
   },
   data() {
-    return {
-
-    };
+    return {};
   },
   methods: {
     goToSettings() {
       this.$navigateTo(Setting, {
+        transition: "SlideRight"
+      });
+    },
+    goToChat() {
+      this.$navigateTo(Chat, {
         transition: "SlideRight"
       });
     },
@@ -65,11 +67,11 @@ export default {
     },
     checkAuthentication() {
       this.$store.dispatch("loadFromStorage");
-      if(this.token == null) {
+      if (this.token == null) {
         this.$navigateTo(Login, {
           clearHistory: true,
           transition: "SlideLeft"
-        })
+        });
       }
     }
   },
@@ -98,22 +100,22 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  @import "../app-variables";
-  @import "../app-common";
-  // End custom common variables
+@import "../app-variables";
+@import "../app-common";
+// End custom common variables
 
-  // Custom styles
-  .fa {
-    color: $accent-dark;
-  }
+// Custom styles
+.fa {
+  color: $accent-dark;
+}
 
-  .info {
-    font-size: 20;
-  }
+.info {
+  font-size: 20;
+}
 
-  .fas {
-    font-family: "Font Awesome 5 Free";
-    font-style: normal;
-    font-weight: 900;
-  }
+.fas {
+  font-family: "Font Awesome 5 Free";
+  font-style: normal;
+  font-weight: 900;
+}
 </style>
