@@ -2,34 +2,54 @@
   <Page>
     <ActionBar class="action-bar">
       <NavigationButton @tap="$navigateBack()" android.systemIcon="ic_menu_back" />
-      <Image src="~/images/avatar_2.png" class="thumb"></Image>
-      <Label text="John Doe" class="color_blue" textWrap="true" horizontalAlignment="center"></Label>
+      <StackLayout orientation="horizontal" android:horizontalAlignment="left">
+        <Image src="~/images/user_1.jpg" width="40" height="40" class="thumb pull-left"></Image>
+        <Label horizontalAlignment="left" verticalAlignment="center">
+          <FormattedString>
+            <Span text="John Doe" class="action-bar-title" />
+            <Span class="online" />
+          </FormattedString>
+        </Label>
+      </StackLayout>
+      <ActionItem android.systemIcon="ic_menu_search" @tap="" android.position="actionBar" />
+      <ActionItem android.position="popup" @tap="" text="Profile Info" />
+      <ActionItem android.position="popup" @tap="" text="Block Friend" />
+      <ActionItem android.position="popup" @tap="goToHome" text="Home Page" />
     </ActionBar>
 
     <StackLayout class="msger">
-      <!-- DIRECT CHAT -->
-      <StackLayout class="msger-chat" height="90%">
+      <!-- CHAT -->
+      <StackLayout class="msger-chat" height="88%">
         <ListView for="item in items" height="100%" separatorColor="transparent">
           <v-template>
-            <StackLayout :class="item.is_you ? 'msg right-msg' : 'msg left-msg'">
-              <StackLayout class="msg-bubble">
-                <Label class="msg-info">
-                  <Label class="msg-info-name">{{ item.fullname }}</Label>
-                  <Label class="msg-info-time pull-right">{{ item.when }}</Label>
-                </Label>
-                <Label class="msg-text" :text="item.text"></Label>
+            <StackLayout class="msg" width="70%">
+              <StackLayout :class="item.is_you ? 'bubble alt' : 'bubble'">
+                <StackLayout class="txt">
+                  <WrapLayout class="message" textWrap="true" orientation="horizontal">
+                    <Label class="msg-text" :text="item.text" textWrap="true"></Label>
+                    <Label class="timestamp" horizontalAlignment="right">
+                      <FormattedString>
+                        <Span :text="item.when + ' '" />
+                        <Span v-if="item.status == 'delivered'" class="fal" text.decode="&#xf560;" />
+                        <Span v-if="item.status == 'read'" class="fal" color="#579ffb" text.decode="&#xf560;" />
+                      </FormattedString>
+                    </Label>
+                  </WrapLayout>
+                </StackLayout>
+                <StackLayout :class="item.is_you ? 'bubble-arrow alt' : 'bubble-arrow'"></StackLayout>
               </StackLayout>
             </StackLayout>
           </v-template>
         </ListView>
         <!-- Conversations are loaded here -->
       </StackLayout>
-      <StackLayout height="10%" class="send-msg-form">
-        <GridLayout rows="*" columns="*,auto" class="form">
-          <TextField hint="Type here" class="input input-rounded" row="0" col="0" />
-          <Button @tap="sendMessage" row="0" class="btn btn-primary btn-rounded-lg" col="1">
-            <Label class="material-icons" text.decode="\ue163"></Label>
-          </Button>
+      <!-- TextField form -->
+      <StackLayout height="12%" class="send-form">
+        <GridLayout rows="*" columns="*, auto" class="form" orientation="horizontal">
+          <TextField hint="Type a message" class="input input-rounded" row="0" col="0"></TextField>
+          <StackLayout row="0" col="1" horizontalAlignment="right" style="color: #579ffb;" class="btn btn-rounded-lg" orientation="horizontal" @tap="sendMessage">
+            <Image src="res://ic_send_black_24"></Image>
+          </StackLayout>
         </GridLayout>
       </StackLayout>
     </StackLayout>
@@ -39,6 +59,7 @@
 <script>
 import axios from "axios";
 import Login from "./Login";
+import Home from "./Home";
 import ChatList from "./ChatList";
 import GroupList from "./GroupList";
 import People from "./People";
@@ -47,6 +68,7 @@ import api from "~/shared/snackbar/index";
 import { mapGetters } from "vuex";
 
 const applicationSettings = require("tns-core-modules/application-settings");
+require("material-design-icons/iconfont/material-icons.css");
 import { alert } from "tns-core-modules/ui/dialogs";
 export default {
   data() {
@@ -70,56 +92,61 @@ export default {
         {
           fullname: "Festus Oyeleye",
           text: "Hi",
-          when: this.getTime(),
+          when: "7:12 AM",
+          status: "read",
           is_you: true
         },
         {
           fullname: "John Doe",
           text: "How are you?",
-          when: this.getTime(),
+          when: "7:35 AM",
+          status: "read",
           is_you: false
         },
         {
           fullname: "John Doe",
           text: "It's been a while.",
-          when: this.getTime(),
+          when: "7:35 AM",
+          status: "read",
           is_you: false
         },
         {
           fullname: "Festus Oyeleye",
           text: "Yeah, it is. How are your family?",
-          when: this.getTime(),
+          when: "7:37 AM",
+          status: "read",
           is_you: true
         },
         {
           fullname: "John Doe",
-          text: "They are good and yours?",
-          when: this.getTime(),
+          text: "They are good and yours? 😄",
+          when: "7:38 AM",
+          status: "read",
           is_you: false
         },
         {
           fullname: "Festus Oyeleye",
-          text: "\u263A\u263A\u263A. Good.",
-          when: this.getTime(),
+          text: "\u263A\u263A\u263A. Good to hear that bro.",
+          when: "7:40 AM",
+          status: "read",
           is_you: true
+        },
+        {
+          fullname: "John Doe",
+          text: "Hope you're keeping up with the corona-virus trends. Its very bad here, movement has been restricted and it seems it will last for a long time.",
+          when: "7:41 AM",
+          status: "delivered",
+          is_you: false
         }
       );
     },
-    getTime() {
-      var now = new Date();
-      var hours = now.getHours();
-      var time =
-        hours == 12
-          ? "12" + ":" + now.getMinutes() + ":" + (hours < 13 ? "AM" : "PM")
-          : (hours % 12) +
-            ":" +
-            now.getMinutes() +
-            ":" +
-            (hours < 13 ? "AM" : "PM");
-      return time;
-    },
     sendMessage() {
       return false;
+    },
+    goToHome() {
+      this.$navigateTo(Home, {
+        transition: "SlideRight"
+      });
     }
   },
   beforeMount() {
@@ -150,108 +177,164 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../app";
-
-// End custom common variables
-
-// Custom styles
-.fa {
-  color: $accent-dark;
-}
-.thumb {
-  border-radius: 50%;
-  height: 60;
-  width: 60;
-}
-.send-msg-form {
-  padding-right: 5;
-  padding-left: 5;
-}
-/*
-  * Component: Chat
-  * ----------------------
+  @import "../app";
+  .send-form {
+    display: flex;
+    margin-bottom: 3;
+    padding: 5;
+  }
+  .input-text {
+    flex: 1;
+  }
+  .input {
+    border-width: 0;
+    placeholder-color: #777;
+    color: #777;
+    background: #fff;
+  }
+  /*
+    * Component: Chat
+    * ----------------------
   */
-.msger {
-  display: flex;
-  flex-flow: column wrap;
-  justify-content: space-between;
-  width: 100%;
-  height: 100%;
-  border-color: #ddd;
-  border-radius: 5;
-  box-shadow: 0 15 15 -5 rgba(0, 0, 0, 0.2);
-}
-.msger-chat {
-  flex: 1;
-  padding: 10;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}
-.msg {
-  display: flex;
-  align-items: flex-end;
-  margin-bottom: 10;
-  &:last-of-type {
-    margin: 0;
+  .msger {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    border-color: #ddd;
+    border-radius: 5;
+    box-shadow: 0 15 15 -5 rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: url("~/images/chat_background.png") no-repeat;
+    position: fixed;
+    min-width: 100%;
+    min-height: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
   }
-}
-.msg-img {
-  width: 50;
-  height: 50;
-  margin-right: 10;
-  background-color: #ddd;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  border-radius: 50%;
-}
-.msg-bubble {
-  padding: 15;
-  border-radius: 15;
-  background-color: #ececec;
-  &::before {
-    margin-top: 5;
+  .msger-chat {
+    flex: 1;
+    padding: 6;
   }
-  &::after {
-    margin-bottom: 5;
+  .action-bar-title {
+    horizontal-align: center;
+    color: #222;
   }
-}
-.msg-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10;
-}
-.msg-info-name {
-  margin-right: 8;
-  font-weight: bold;
-  font-size: 10;
-}
-.msg-info-time {
-  margin-left: 8;
-  font-size: 10;
-}
-.left-msg .msg-bubble {
-  width: auto;
-  max-width: 60%;
-  border-bottom-left-radius: 0;
-}
-.right-msg {
-  flex-direction: row-reverse;
-}
-.right-msg .msg-bubble {
-  width: auto;
-  max-width: 60%;
-  background-color: #579ffb;
-  color: #fff;
-  border-bottom-right-radius: 0;
-}
-.right-msg .msg-img {
-  margin: 0 0 0 10;
-}
-.msger-chat {
-  background-color: #fcfcfe;
-}
-.msg-text {
-  font-size: 12;
-}
+  .mdi {
+    font-family: "Material Icons", "MaterialIcons-Regular";
+  }
+  .thumb {
+    border-radius: 50%;
+    margin-right: 10;
+  }
+  .online {
+    height: 10;
+    width: 10;
+    background-color: #1fb833;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .online-text {
+    font-size: 11;
+    color: #555;
+  }
+  .offline {
+    height: 10;
+    width: 10;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  /**
+  * chat template
+  */
+  .msg {
+    display: flex;
+    align-items: flex-end;
+    height: auto;
+    overflow: hidden;
+    .bubble {
+      display: inline-block;
+      width: auto;
+      horizontal-align: left;
+      height: auto;
+      background: #ebebeb;
+      border-radius: 10;
+      border-top-left-radius: 0;
+      position: relative;
+      margin: 5 0 3 10;
+      box-shadow: 0 2 1 rgba(0, 0, 0, 0.2);
+      &.alt {
+        horizontal-align: right;
+        flex-direction: row-reverse;
+        margin: 5 10 3 0;
+        border-top-right-radius: 0;
+        border-top-left-radius: 10;
+        background: #DCF8C6;
+      }
+      .txt {
+        padding: 4 0 4 0;
+        display: inline-block;
+        .name {
+          font-weight: 600;
+          font-size: 11;
+          display: inline-block;
+          padding: 0 0 0 15;
+          margin: 0 0 4 0;
+          color: #3498db;
+          &.alt {
+            color: #2ecc51;
+          }
+        }
+        .message {
+          padding: 0 10 0 10;
+          margin: auto;
+          color: #2b2b2b;
+          display: inline-block;
+          .timestamp {
+            font-size: 12;
+            margin: 5 0 0 3;
+            margin-top: 5;
+            position: relative;
+            text-transform: uppercase;
+            horizontal-align: right;
+            color: #999;
+            font-weight: 600;
+          }
+        }
+      }
+      .bubble-arrow {
+        position: absolute;
+        horizontal-align: left;
+        left: -8;
+        top: 0;
+        &.alt {
+          bottom: 20;
+          left: auto;
+          right: 4;
+          horizontal-align: right;
+          &::after {
+            border-top: 15 solid #DCF8C6;
+            transform: scaleX(-1);
+          }
+        }
+        &::after {
+          content: "";
+          position: absolute;
+          border-top: 15 solid #ebebeb;
+          border-left: 15 solid transparent;
+          border-radius: 4 0 0 0;
+          width: 0;
+          height: 0;
+        }
+      }
+    }
+  }
+  .msg-text {
+    color: #222;
+    font-size: 16;
+  }
 </style>

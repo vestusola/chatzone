@@ -57,3 +57,38 @@
 .color_blue.active.focus {
   color: #30bcff;
 }
+
+.fa {
+  font-family: "Font Awesome 5 Pro", "fa-regular-400";
+  font-weight: 400;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+.fas {
+  font-family: "Font Awesome 5 Pro", "fa-solid-900";
+  font-weight: 900;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+.fab {
+  font-family: "Font Awesome 5 Brands", "fa-brands-400";
+  font-weight: 400;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+.fal {
+  font-family: "Font Awesome 5 Pro", "fa-light-300";
+  font-weight: 300;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+.fad {
+  font-family: "Font Awesome 5 Duotone", "fa-duotone-900";
+  font-weight: 900;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
