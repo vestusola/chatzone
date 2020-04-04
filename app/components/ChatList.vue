@@ -156,8 +156,8 @@
   .time {
     color: #222;
     font-size: 14;
+    font-weight: 400;
     margin-right: 5;
-    margin-bottom: 10;
   }
   .thumb {
     border-radius: 50%;
@@ -168,8 +168,8 @@
     font-size: 20;
   }
   .unread {
-    width: 22;
-    height: 22;
+    width: 24;
+    height: 24;
     border-radius: 50%;
     padding-top: 2;
     background-color: #579ffb;
@@ -177,10 +177,10 @@
     text-align: center;
     color: $white;
     font-weight: 600;
-    font-size: 12;
+    font-size: 14;
   }
   .time-unread {
-    font-size: 12;
+    font-size: 14;
     font-weight: 600;
     color: #579ffb;
     margin-right: 5;

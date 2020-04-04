@@ -3,18 +3,16 @@
     <ActionBar class="action-bar">
       <NavigationButton @tap="$navigateBack()" android.systemIcon="ic_menu_back" />
       <StackLayout orientation="horizontal" android:horizontalAlignment="left">
-        <Image src="~/images/user_1.jpg" width="40" height="40" class="thumb pull-left"></Image>
-        <Label horizontalAlignment="left" verticalAlignment="center">
-          <FormattedString>
-            <Span text="John Doe" class="action-bar-title" />
-            <Span class="online" />
-          </FormattedString>
-        </Label>
+        <WrapLayout>
+          <Image src="~/images/user_1.jpg" width="40" height="40" class="thumb pull-left"></Image>
+          <Label class="online" />
+        </WrapLayout>
+        <Label text="John Doe" class="action-bar-title" />
       </StackLayout>
-      <ActionItem android.systemIcon="ic_menu_search" @tap="" android.position="actionBar" />
+      <ActionItem @tap="" android.systemIcon="ic_dialog_email"/>
+      <ActionItem @tap="" android.systemIcon="ic_menu_call" />
       <ActionItem android.position="popup" @tap="" text="Profile Info" />
       <ActionItem android.position="popup" @tap="" text="Block Friend" />
-      <ActionItem android.position="popup" @tap="goToHome" text="Home Page" />
     </ActionBar>
 
     <StackLayout class="msger">
@@ -22,7 +20,7 @@
       <StackLayout class="msger-chat" height="88%">
         <ListView for="item in items" height="100%" separatorColor="transparent">
           <v-template>
-            <StackLayout class="msg" width="70%">
+            <StackLayout class="msg">
               <StackLayout :class="item.is_you ? 'bubble alt' : 'bubble'">
                 <StackLayout class="txt">
                   <WrapLayout class="message" textWrap="true" orientation="horizontal">
@@ -30,7 +28,7 @@
                     <Label class="timestamp" horizontalAlignment="right">
                       <FormattedString>
                         <Span :text="item.when + ' '" />
-                        <Span v-if="item.status == 'delivered'" class="fal" text.decode="&#xf560;" />
+                        <Span v-if="item.status == 'delivered'" class="fal" color="#000000" text.decode="&#xf560;" />
                         <Span v-if="item.status == 'read'" class="fal" color="#579ffb" text.decode="&#xf560;" />
                       </FormattedString>
                     </Label>
@@ -45,10 +43,10 @@
       </StackLayout>
       <!-- TextField form -->
       <StackLayout height="12%" class="send-form">
-        <GridLayout rows="*" columns="*, auto" class="form" orientation="horizontal">
-          <TextField hint="Type a message" class="input input-rounded" row="0" col="0"></TextField>
-          <StackLayout row="0" col="1" horizontalAlignment="right" style="color: #579ffb;" class="btn btn-rounded-lg" orientation="horizontal" @tap="sendMessage">
-            <Image src="res://ic_send_black_24"></Image>
+        <GridLayout rows="*" columns="*,auto" class="form" orientation="horizontal">
+          <TextField hint="Type a message" class="input input-sides" row="0" col="0"></TextField>
+          <StackLayout row="0" col="1" @tap="sendMessage" orientation="horizontal" >
+            <Image src="res://ic_send_black_24" tintColor="#579ffb" width="50" height="50" verticalAlignment="center"></Image>
           </StackLayout>
         </GridLayout>
       </StackLayout>
@@ -183,14 +181,31 @@ export default {
     margin-bottom: 3;
     padding: 5;
   }
+  .form {
+    border-width: 1;
+    border-color: #e0e0e0;
+    border-radius: 28;
+    padding: 16;
+  }
+  .send-form .form {
+    background: #fff;
+    color: #777;
+  }
+  .btn-img {
+    margin: 0;
+    height: 70;
+    width: 70;
+    border-radius: 50%;
+    background-color: #579ffb;
+    display: inline-block;    // background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  }
   .input-text {
     flex: 1;
   }
   .input {
-    border-width: 0;
+    background: #fff;
     placeholder-color: #777;
     color: #777;
-    background: #fff;
   }
   /*
     * Component: Chat
@@ -205,7 +220,6 @@ export default {
     border-color: #ddd;
     border-radius: 5;
     box-shadow: 0 15 15 -5 rgba(0, 0, 0, 0.2);
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     background: url("~/images/chat_background.png") no-repeat;
     position: fixed;
     min-width: 100%;
@@ -222,6 +236,7 @@ export default {
   .action-bar-title {
     horizontal-align: center;
     color: #222;
+    // color: #fff;
   }
   .mdi {
     font-family: "Material Icons", "MaterialIcons-Regular";
@@ -233,8 +248,10 @@ export default {
   .online {
     height: 10;
     width: 10;
+    margin-right: 3;
     background-color: #1fb833;
     border-radius: 50%;
+    padding-bottom: 10;
     display: inline-block;
   }
   .online-text {
@@ -253,6 +270,7 @@ export default {
   */
   .msg {
     display: flex;
+    width: 100%;
     align-items: flex-end;
     height: auto;
     overflow: hidden;
@@ -265,12 +283,12 @@ export default {
       border-radius: 10;
       border-top-left-radius: 0;
       position: relative;
-      margin: 5 0 3 10;
+      margin: 5 50 3 10;
       box-shadow: 0 2 1 rgba(0, 0, 0, 0.2);
       &.alt {
         horizontal-align: right;
         flex-direction: row-reverse;
-        margin: 5 10 3 0;
+        margin: 5 10 3 50;
         border-top-right-radius: 0;
         border-top-left-radius: 10;
         background: #DCF8C6;
@@ -337,4 +355,8 @@ export default {
     color: #222;
     font-size: 16;
   }
+  // .action-bar {
+  //   background: linear-gradient(145deg,  #0066FF 23%, #30bcff 100%);
+  //   color: #fff;
+  // }
 </style>
