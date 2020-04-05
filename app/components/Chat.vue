@@ -5,7 +5,7 @@
       <StackLayout orientation="horizontal" android:horizontalAlignment="left">
         <WrapLayout>
           <Image src="~/images/user_1.jpg" width="40" height="40" class="thumb pull-left"></Image>
-          <Label class="online" />
+          <Label class="online" verticalAlignment="bottom" />
         </WrapLayout>
         <Label text="John Doe" class="action-bar-title" />
       </StackLayout>
@@ -42,7 +42,7 @@
       </StackLayout>
 
       <!-- TextField form -->
-      <StackLayout class="send-form" ref="subdiv" :height="subHeight">
+      <StackLayout class="send-form" ref="subdiv" :height="subHeight" verticalAlignment="bottom">
         <GridLayout rows="auto" columns="*,auto" class="form">
             <TextView hint="Type a message" @focus="textFieldFocus" @blur="removeFocus" row="0" col="0" textWrap="true" v-model="message" ref="textview" class="input input-sides" />
             <StackLayout row="0" col="1" @tap="sendMessage" verticalAlignment="center">
@@ -160,8 +160,8 @@ export default {
       });
     },
     textFieldFocus(args) {
-      this.$refs.maindiv.nativeView.height = { unit: "%", value: 0.78 };
-      this.$refs.subdiv.nativeView.height = { unit: "%", value: 0.22 };
+      this.$refs.maindiv.nativeView.height = { unit: "%", value: 0.79 };
+      this.$refs.subdiv.nativeView.height = { unit: "%", value: 0.21 };
     },
     removeFocus() {
       this.$refs.textview.nativeView.dismissSoftInput();
@@ -169,6 +169,7 @@ export default {
       this.$refs.subdiv.nativeView.height = { unit: "%", value: 0.12 };
     },
     onBackKeyPressed() {
+      console.log('I am clicked');
       let vm = this;
       application.android.on(AndroidApplication.activityBackPressedEvent, () => {
         vm.removeFocus();
@@ -216,7 +217,7 @@ export default {
   @import "../app";
   .send-form {
     padding-top: 5;
-    padding-bottom: 5;
+    padding-bottom: 3;
     padding-right: 5;
     padding-left: 5;
   }
@@ -275,19 +276,15 @@ export default {
   .online {
     height: 10;
     width: 10;
-    margin-right: 3;
+    margin-right: 10;
     background-color: #1fb833;
     border-radius: 50%;
-    padding-bottom: 10;
     display: inline-block;
-  }
-  .online-text {
-    font-size: 11;
-    color: #555;
   }
   .offline {
     height: 10;
     width: 10;
+    margin-right: 10;
     background-color: #bbb;
     border-radius: 50%;
     display: inline-block;
@@ -306,7 +303,7 @@ export default {
       width: auto;
       horizontal-align: left;
       height: auto;
-      background: #ebebeb;
+      background: #f5f5f5;
       border-radius: 10;
       border-top-left-radius: 0;
       position: relative;
@@ -362,16 +359,19 @@ export default {
           right: 4;
           horizontal-align: right;
           &::after {
-            border-top: 15 solid #DCF8C6;
+            border-top-width: 15;
+            border-top-color: #DCF8C6;
             transform: scaleX(-1);
           }
         }
         &::after {
           content: "";
           position: absolute;
-          border-top: 15 solid #ebebeb;
-          border-left: 15 solid transparent;
-          border-radius: 4 0 0 0;
+          border-top-width: 15;
+          border-top-color: #f5f5f5;
+          border-left-color: transparent;
+          border-left-width: 15;
+          border-radius: 6 0 0 0;
           width: 0;
           height: 0;
         }
