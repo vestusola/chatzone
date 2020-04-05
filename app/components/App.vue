@@ -1,7 +1,7 @@
 <template>
   <Page>
     <ActionBar class="action-bar">
-      <Label style="color: #30bcff;" text="ChatZone" horizontalAlignment="center" />
+      <Label class="action-bar-title" text="ChatZone" horizontalAlignment="center" />
       <ActionItem android.position="popup" text="New Group" />
       <ActionItem android.position="popup" @tap="goToSettings" text="Settings" />
       <ActionItem android.position="popup" @tap="goToChat" text="Chat" />
@@ -9,9 +9,9 @@
 
     <BottomNavigation selectedIndex="0">
       <TabStrip>
-        <TabStripItem title="Chats" class="material-icons" iconSource="res://ic_chat_black_24"></TabStripItem>
-        <TabStripItem title="Groups" class="material-icons" iconSource="res://ic_forum_black_24"></TabStripItem>
-        <TabStripItem title="People" class="material-icons" iconSource="res://ic_people_black_24"></TabStripItem>
+        <TabStripItem title="Chats" class="fad" iconSource="res://ic_chat_black_24"></TabStripItem>
+        <TabStripItem title="Groups" class="fad" iconSource="res://ic_forum_black_24"></TabStripItem>
+        <TabStripItem title="People" class="fad" iconSource="res://ic_people_black_24"></TabStripItem>
       </TabStrip>
 
       <TabContentItem>
@@ -100,22 +100,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../app-variables";
-@import "../app-common";
-// End custom common variables
+@import "../app";
 
 // Custom styles
-.fa {
-  color: $accent-dark;
-}
-
 .info {
   font-size: 20;
 }
 
-.fas {
-  font-family: "Font Awesome 5 Free";
-  font-style: normal;
-  font-weight: 900;
+.action-bar-title {
+  horizontal-align: center;
+  color: #222;
 }
 </style>

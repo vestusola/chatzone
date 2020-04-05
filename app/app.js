@@ -11,7 +11,6 @@ import {TNSFontIcon, fonticon} from 'nativescript-fonticon';
 
 TNSFontIcon.debug = true;
 TNSFontIcon.paths = {
-  'material-icons': './css/material-icons.css',
   'fa': './css/fontawesome.min.css',
   'fal': './css/light.min.css',
   'far': './css/regular.min.css',

@@ -143,20 +143,16 @@
 
 <style scoped lang="scss">
   @import "../app";
-
   // End custom common variables
 
   // Custom styles
-  .fa {
-    color: $accent-dark;
-  }
   .info {
     font-size: 20;
   }
   .time {
     color: #222;
     font-size: 14;
-    font-weight: 400;
+    font-weight: 500;
     margin-right: 5;
   }
   .thumb {

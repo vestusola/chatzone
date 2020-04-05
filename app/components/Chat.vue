@@ -9,7 +9,6 @@
         </WrapLayout>
         <Label text="John Doe" class="action-bar-title" />
       </StackLayout>
-      <ActionItem @tap="" android.systemIcon="ic_dialog_email"/>
       <ActionItem @tap="" android.systemIcon="ic_menu_call" />
       <ActionItem android.position="popup" @tap="" text="Profile Info" />
       <ActionItem android.position="popup" @tap="" text="Block Friend" />
@@ -17,7 +16,7 @@
 
     <StackLayout class="msger">
       <!-- CHAT -->
-      <StackLayout class="msger-chat" height="88%">
+      <StackLayout class="msger-chat" ref="maindiv" :height="mainHeight">
         <ListView for="item in items" height="100%" separatorColor="transparent">
           <v-template>
             <StackLayout class="msg">
@@ -28,8 +27,8 @@
                     <Label class="timestamp" horizontalAlignment="right">
                       <FormattedString>
                         <Span :text="item.when + ' '" />
-                        <Span v-if="item.status == 'delivered'" class="fal" color="#000000" text.decode="&#xf560;" />
-                        <Span v-if="item.status == 'read'" class="fal" color="#579ffb" text.decode="&#xf560;" />
+                        <Span v-if="item.status == 'delivered'" class="fas" color="#000000" text.decode="&#xf00c;" />
+                        <Span v-if="item.status == 'read'" class="fas" color="#579ffb" text.decode="&#xf00c;" />
                       </FormattedString>
                     </Label>
                   </WrapLayout>
@@ -41,13 +40,14 @@
         </ListView>
         <!-- Conversations are loaded here -->
       </StackLayout>
+
       <!-- TextField form -->
-      <StackLayout height="12%" class="send-form">
-        <GridLayout rows="*" columns="*,auto" class="form" orientation="horizontal">
-          <TextField hint="Type a message" class="input input-sides" row="0" col="0"></TextField>
-          <StackLayout row="0" col="1" @tap="sendMessage" orientation="horizontal" >
-            <Image src="res://ic_send_black_24" tintColor="#579ffb" width="50" height="50" verticalAlignment="center"></Image>
-          </StackLayout>
+      <StackLayout class="send-form" ref="subdiv" :height="subHeight">
+        <GridLayout rows="auto" columns="*,auto" class="form">
+            <TextView hint="Type a message" @focus="textFieldFocus" @blur="removeFocus" row="0" col="0" textWrap="true" v-model="message" ref="textview" class="input input-sides" />
+            <StackLayout row="0" col="1" @tap="sendMessage" verticalAlignment="center">
+              <Image src="res://ic_send_black_24" :tintColor="tintColor" width="40" height="40"></Image>
+            </StackLayout>
         </GridLayout>
       </StackLayout>
     </StackLayout>
@@ -62,16 +62,22 @@ import ChatList from "./ChatList";
 import GroupList from "./GroupList";
 import People from "./People";
 import Setting from "./Setting";
-import api from "~/shared/snackbar/index";
+import notify from "~/shared/snackbar/index";
+import { url } from "~/shared/api";
 import { mapGetters } from "vuex";
 
+import * as application from "tns-core-modules/application";
+import { AndroidApplication } from "tns-core-modules/application";
+import { isAndroid } from "tns-core-modules/platform";
 const applicationSettings = require("tns-core-modules/application-settings");
-require("material-design-icons/iconfont/material-icons.css");
-import { alert } from "tns-core-modules/ui/dialogs";
 export default {
   data() {
     return {
-      items: []
+      items: [],
+      message: "",
+      mainHeight: "88%",
+      subHeight: "12%",
+      tintColor: "#000000"
     };
   },
   methods: {
@@ -139,11 +145,33 @@ export default {
       );
     },
     sendMessage() {
-      return false;
+      console.log(`You typed: ${this.message}`);
+      if (this.message == "") {
+        return false;
+      } else  {
+        this.$refs.textview.nativeView.android.clearFocus();
+        this.message = "";
+        this.removeFocus();
+      }
     },
     goToHome() {
       this.$navigateTo(Home, {
         transition: "SlideRight"
+      });
+    },
+    textFieldFocus(args) {
+      this.$refs.maindiv.nativeView.height = { unit: "%", value: 0.78 };
+      this.$refs.subdiv.nativeView.height = { unit: "%", value: 0.22 };
+    },
+    removeFocus() {
+      this.$refs.textview.nativeView.dismissSoftInput();
+      this.$refs.maindiv.nativeView.height = { unit: "%", value: 0.88 };
+      this.$refs.subdiv.nativeView.height = { unit: "%", value: 0.12 };
+    },
+    onBackKeyPressed() {
+      let vm = this;
+      application.android.on(AndroidApplication.activityBackPressedEvent, () => {
+        vm.removeFocus();
       });
     }
   },
@@ -170,6 +198,16 @@ export default {
         return this.$store.dispatch("setInfo", newValue);
       }
     }
+  },
+  watch: {
+    message() {
+      console.log(this.message);
+      if (this.message != "" || this.message.length > 0) {
+        this.tintColor = "#579ffb";
+      } else {
+        this.tintColor = "#000000";
+      }
+    }
   }
 };
 </script>
@@ -177,35 +215,28 @@ export default {
 <style scoped lang="scss">
   @import "../app";
   .send-form {
-    display: flex;
-    margin-bottom: 3;
-    padding: 5;
+    padding-top: 5;
+    padding-bottom: 5;
+    padding-right: 5;
+    padding-left: 5;
   }
   .form {
+    padding-top: 3;
+    padding-bottom: 3;
+    padding-right: 10;
+    padding-left: 10;
+    border-radius: 30;
     border-width: 1;
-    border-color: #e0e0e0;
-    border-radius: 28;
-    padding: 16;
+    border-color: #fff;
   }
   .send-form .form {
     background: #fff;
-    color: #777;
-  }
-  .btn-img {
-    margin: 0;
-    height: 70;
-    width: 70;
-    border-radius: 50%;
-    background-color: #579ffb;
-    display: inline-block;    // background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  }
-  .input-text {
-    flex: 1;
+    color: #555;
   }
   .input {
-    background: #fff;
     placeholder-color: #777;
-    color: #777;
+    color: #222;
+    font-size: 14;
   }
   /*
     * Component: Chat
@@ -236,10 +267,6 @@ export default {
   .action-bar-title {
     horizontal-align: center;
     color: #222;
-    // color: #fff;
-  }
-  .mdi {
-    font-family: "Material Icons", "MaterialIcons-Regular";
   }
   .thumb {
     border-radius: 50%;
@@ -355,8 +382,4 @@ export default {
     color: #222;
     font-size: 16;
   }
-  // .action-bar {
-  //   background: linear-gradient(145deg,  #0066FF 23%, #30bcff 100%);
-  //   color: #fff;
-  // }
 </style>
