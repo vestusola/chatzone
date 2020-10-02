@@ -2,6 +2,7 @@
 import Vue from "nativescript-vue";
 import RadListView from "nativescript-ui-listview/vue";
 import RadDataForm from "nativescript-ui-dataform/vue";
+Vue.registerElement('FloatingActionButton', () => require('nativescript-floatingactionbutton').Fab);
 
 // Import components
 import App from "./components/App";

@@ -7,7 +7,7 @@ import * as ApplicationSettings from "application-settings";
 const state = {
   token: null,
   info: {}
-}
+};
 
 const getters = {
   token: (state) => {

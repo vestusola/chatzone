@@ -4,27 +4,36 @@
       <v-template>
         <GridLayout rows="auto,auto" columns="auto,*,auto" class="list-group-item">
           <Image row="0" col="0" rowSpan="2" :src="item.image" class="thumb"></Image>
-          <Label row="0" col="1" class="font-weight-bold" :text="item.fullname"></Label>
-          <Label row="1" col="1" :text="item.text"></Label>
+          <Label row="0" col="1" class="font-weight-bold"  style="font-size: 16" :text="item.fullname"></Label>
+          <Label row="1" col="1" :text="item.text" style="font-size: 14;"></Label>
           <Label row="0" col="2" :text="item.when"
-            class="time" :class.time-unread="item.unread > 0"></Label>
+            :class="item.unread > 0 ? 'time-unread': 'time'"></Label>
           <StackLayout row="1" col="2" orientation="horizontal" class="m-x-auto">
             <Label v-if="item.unread" :text="item.unread" class="unread"></Label>
           </StackLayout>
         </GridLayout>
       </v-template>
     </ListView>
+     <FloationActionButton
+        @tap="addNewGroup"
+        icon="res://ic_add_white"
+        rippleColor="#f1f1f1"
+        class="fab-button"
+      ></FloationActionButton>
   </StackLayout>
 </template>
 
 <script>
   import axios from "axios";
   import Login from "./Login";
+  import NewGroup from "./NewGroup";
+  import GroupChat from "./GroupChat";
   import ChatList from "./ChatList";
   import GroupList from "./GroupList";
   import People from "./People";
   import Setting from "./Setting";
-  import api from "~/shared/snackbar/index";
+  import notify from "~/shared/snackbar/index";
+  import { url } from "~/shared/api";
   import { mapGetters } from "vuex";
 
   const applicationSettings = require("tns-core-modules/application-settings");
@@ -76,7 +85,9 @@
         );
       },
       goToGroupChat(args) {
-        alert('I am clicked ');
+        this.$navigateTo(GroupChat, {
+          transition: "SlideRight"
+        });
       },
       checkAuthentication() {
         this.$store.dispatch("loadFromStorage");
@@ -86,6 +97,11 @@
             transition: "SlideLeft"
           })
         }
+      },
+      addNewGroup() {
+        this.$navigateTo(NewGroup, {
+          transition: "SlideRight"
+        });
       }
     },
     beforeMount() {
@@ -117,25 +133,20 @@
 
 <style scoped lang="scss">
   @import "../app";
-
   // End custom common variables
 
   // Custom styles
-  .fa {
-    color: $accent-dark;
-  }
   .info {
     font-size: 20;
   }
   .time {
-    color: #000000;
-    font-size: 13;
+    color: #222;
+    font-size: 14;
+    font-weight: 500;
     margin-right: 5;
   }
   .thumb {
     border-radius: 50%;
-    height: 60;
-    width: 60;
   }
   .muted {
     font-weight: normal;
@@ -143,61 +154,21 @@
     font-size: 20;
   }
   .unread {
-    font-size: 11;
-    padding-top: 2;
+    width: 24;
+    height: 24;
     border-radius: 50%;
-    background-color: #5bc0de;
+    padding-top: 2;
+    background-color: #579ffb;
     margin-right: 5;
     text-align: center;
-    min-width: 20;
-    min-height: 20;
     color: $white;
+    font-weight: 600;
+    font-size: 14;
   }
-  .unread.active,
-  .unread:active {
-    font-size: 11;
-    padding-top: 2;
-    border-radius: 50%;
-    background-color: #31b0d5;
-    margin-right: 5;
-    text-align: center;
-    min-width: 20;
-    min-height: 20;
-    color: $white;
-  }
-  .unread:hover {
-    font-size: 11;
-    padding-top: 2;
-    border-radius: 50%;
-    background-color: #31b0d5;
-    margin-right: 5;
-    text-align: center;
-    min-width: 20;
-    min-height: 20;
-    color: $white;
-  }
-  .unread:active:hover,
-  .unread.active:hover,
-  .unread:active:focus,
-  .unread.active:focus,
-  .unread:active.focus,
-  .unread.active.focus {
-    font-size: 11;
-    padding-top: 2;
-    border-radius: 50%;
-    background-color: #269abc;
-    margin-right: 5;
-    text-align: center;
-    min-width: 20;
-    min-height: 20;
-    color: $white;
-  }
-  .time {
-    &-unread {
-      color: #fff;
-    }
-    color: #000000;
-    font-size: 12;
+  .time-unread {
+    font-size: 14;
+    font-weight: 600;
+    color: #579ffb;
     margin-right: 5;
   }
   .list-group.list-group-item {
@@ -221,5 +192,13 @@
   .list-group .list-group-item .list-group-item-text {
     color: #757575;
     font-size: 14;
+  }
+  .fab-button {
+    height: 70;
+    width: 70;
+    margin: 15;
+    background-color: #579ffb;
+    horizontal-align: right;
+    vertical-align: bottom;
   }
 </style>

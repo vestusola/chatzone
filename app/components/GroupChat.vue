@@ -1,223 +1,392 @@
 <template>
-  <StackLayout>
-    <ListView class="list-group" for="item in items" @itemTap="goToGroupChat" seperatorColor="black" height="100%">
-      <v-template>
-        <GridLayout rows="auto,auto" columns="auto,*,auto" class="list-group-item">
-          <Image row="0" col="0" rowSpan="2" :src="item.image" class="thumb"></Image>
-          <Label row="0" col="1" class="font-weight-bold" :text="item.fullname"></Label>
-          <Label row="1" col="1" :text="item.text"></Label>
-          <Label row="0" col="2" :text="item.when"
-            class="time" :class.time-unread="item.unread > 0"></Label>
-          <StackLayout row="1" col="2" orientation="horizontal" class="m-x-auto">
-            <Label v-if="item.unread" :text="item.unread" class="unread"></Label>
-          </StackLayout>
-        </GridLayout>
-      </v-template>
-    </ListView>
-  </StackLayout>
+  <Page>
+    <ActionBar class="action-bar">
+      <NavigationButton @tap="$navigateBack()" android.systemIcon="ic_menu_back" />
+      <StackLayout orientation="horizontal" android:horizontalAlignment="left">
+        <WrapLayout>
+          <Image src="~/images/user_1.jpg" width="40" height="40" class="thumb pull-left"></Image>
+        </WrapLayout>
+        <Label text="RCCG Regional Youth Mass Choir" class="action-bar-title" />
+      </StackLayout>
+      <ActionItem android.position="popup" @tap="" text="Profile Info" />
+      <ActionItem android.position="popup" @tap="" text="Block Friend" />
+    </ActionBar>
+
+    <StackLayout class="msger">
+      <StackLayout class="msger-chat">
+        <ListView for="item in items" height="86%" separatorColor="transparent" ref="listview">
+          <v-template>
+            <StackLayout class="msg">
+              <StackLayout :class="item.is_you ? 'bubble alt' : 'bubble'">
+                <StackLayout class="txt">
+                  <Label v-if="!item.is_you" class="name" :text="item.fullname"></Label>
+                  <StackLayout class="message" textWrap="true">
+                    <Label class="msg-text" :text="item.text" textWrap="true"></Label>
+                    <WrapLayout class="timestamp" orientation="horizontal">
+                      <Label :text="item.when + ' '" />
+                      <Label v-if="item.status == 'delivered'" class="fas m-t-2" color="#000000" text.decode="&#xf00c;" />
+                      <Label v-if="item.status == 'read'" class="fas m-t-2" color="#579ffb" text.decode="&#xf00c;" />
+                    </WrapLayout>
+                  </StackLayout>
+                </StackLayout>
+                <StackLayout :class="item.is_you ? 'bubble-arrow alt' : 'bubble-arrow'"></StackLayout>
+              </StackLayout>
+            </StackLayout>
+          </v-template>
+        </ListView>
+
+        <StackLayout class="send-form" height="14%" ref="subdiv">
+          <GridLayout rows="auto" columns="*,auto" class="form">
+            <TextView hint="Type a message" row="0" col="0" textWrap="true" v-model="message" ref="textview" class="input input-sides" />
+            <StackLayout row="0" col="1" @tap="sendMessage" verticalAlignment="center">
+              <Image src="res://ic_send_black_24" :tintColor="tintColor" width="40" height="40"></Image>
+            </StackLayout>
+          </GridLayout>
+        </StackLayout>
+      </StackLayout>
+    </StackLayout>
+  </Page>
 </template>
 
 <script>
-  import axios from "axios";
-  import Login from "./Login";
-  import ChatList from "./ChatList";
-  import GroupList from "./GroupList";
-  import People from "./People";
-  import Setting from "./Setting";
-  import api from "~/shared/snackbar/index";
-  import { mapGetters } from "vuex";
+import axios from "axios";
+import Login from "./Login";
+import Home from "./Home";
+import ChatList from "./ChatList";
+import GroupList from "./GroupList";
+import People from "./People";
+import Setting from "./Setting";
+import notify from "~/shared/snackbar/index";
+import { url } from "~/shared/api";
+import { mapGetters } from "vuex";
 
-  const applicationSettings = require("tns-core-modules/application-settings");
-  import { alert } from "tns-core-modules/ui/dialogs";
-  export default {
-    data() {
-      return {
-        items: []
+import * as frame from 'ui/frame';
+import * as application from "tns-core-modules/application";
+import { isAndroid } from "tns-core-modules/platform";
+const applicationSettings = require("tns-core-modules/application-settings");
+export default {
+  data() {
+    return {
+      items: [],
+      message: "",
+      tintColor: "#000000"
+    };
+  },
+  methods: {
+    checkAuthentication() {
+      this.$store.dispatch("loadFromStorage");
+      if (this.token == null) {
+        this.$navigateTo(Login, {
+          clearHistory: true,
+          transition: "SlideLeft"
+        });
       }
     },
-    methods: {
-      getTime() {
-        var now = new Date();
-        var hours = now.getHours();
-        var time =  hours == 12 ? "12" + ":" + now.getMinutes() + ":" + (hours < 13 ? "AM": "PM" ) : hours % 12 + ":" + now.getMinutes() + ":" + (hours < 13 ? "AM": "PM" );
-        return time;
-      },
-      getTempData() {
-        this.items = [];
-        this.items.push(
-          {
-            fullname: "Rollar Cecilee Teams",
-            text: "Where are you?",
-            unread: 0,
-            when: this.getTime(),
-            image: "~/images/avatar.png"
-          },
-          {
-            fullname: "Undespised Keys \u263A",
-            text: "\u263A That\'s the point.",
-            unread: 0,
-            when: this.getTime(),
-            image: "~/images/avatar.png"
-          },
-          {
-            fullname: "FUTMINA DE 2020",
-            text: "I'll keep you guys updated, when the POST-UTME screening start.",
-            unread: 6,
-            when: this.getTime(),
-            image: "~/images/avatar.png"
-          },
-          {
-            fullname: "RCCG Regional Choir",
-            text: "I will definately be there.",
-            unread: 0,
-            when: this.getTime(),
-            image: "~/images/avatar.png"
-          }
-        );
-      },
-      goToGroupChat(args) {
-        alert('I am clicked ');
-      },
-      checkAuthentication() {
-        this.$store.dispatch("loadFromStorage");
-        if(this.token == null) {
-          this.$navigateTo(Login, {
-            clearHistory: true,
-            transition: "SlideLeft"
-          })
+    getTempData() {
+      this.items = [];
+      this.items.push(
+        {
+          fullname: "Festus Oyeleye",
+          text: "Hi",
+          when: "7:12 AM",
+          status: "read",
+          is_you: true
+        },
+        {
+          fullname: "John Doe",
+          text: "How are you?",
+          when: "7:35 AM",
+          status: "read",
+          is_you: false
+        },
+        {
+          fullname: "John Doe",
+          text: "It's been a while.",
+          when: "7:35 AM",
+          status: "read",
+          is_you: false
+        },
+        {
+          fullname: "Festus Oyeleye",
+          text: "Yeah, it is. How are your family?",
+          when: "7:37 AM",
+          status: "read",
+          is_you: true
+        },
+        {
+          fullname: "John Doe",
+          text: "They are good and yours? 😄",
+          when: "7:38 AM",
+          status: "read",
+          is_you: false
+        },
+        {
+          fullname: "Festus Oyeleye",
+          text: "\u263A\u263A\u263A. Good to hear that bro.",
+          when: "7:40 AM",
+          status: "read",
+          is_you: true
+        },
+        {
+          fullname: "John Doe",
+          text: "Hope you're keeping up with the corona-virus trends. Its very bad here, movement has been restricted and it seems it will last for a long time.",
+          when: "7:41 AM",
+          status: "delivered",
+          is_you: false
+        },
+        {
+          fullname: "Thomas Edisson",
+          text: "Hi everyone.",
+          when: "8:02 AM",
+          status: "read",
+          is_you: false
+        },
+        {
+          fullname: "Festus Oyeleye",
+          text: "Watsup @Thomas Edisson",
+          when: "8:03 AM",
+          status: "read",
+          is_you: true
+        },
+        {
+          fullname: "Thomas Edisson",
+          text: "I'm good and you? @Festus Oyeleye.",
+          when: "8:22 AM",
+          status: "read",
+          is_you: false
+        },
+        {
+          fullname: "John Doe",
+          text: "It's been a while @Thomas Edisson",
+          when: "8:24 AM",
+          status: "delivered",
+          is_you: false
         }
+      );
+      //this.scroll(this.items.length);
+    },
+    sendMessage() {
+      console.log(`You typed: ${this.message}`);
+      if (this.message == "") {
+        return false;
+      } else  {
+        this.$refs.textview.nativeView.android.clearFocus();
+        this.message = "";
       }
     },
-    beforeMount() {
-      this.checkAuthentication()
+    goToHome() {
+      this.$navigateTo(Home, {
+        transition: "SlideRight"
+      });
     },
-    mounted() {
-      this.getTempData();
-    },
-    computed: {
-      token: {
-        get () {
-          return this.$store.state.token
-        },
-        set (newValue) {
-          return this.$store.dispatch('setToken', newValue)
-        }
+    scroll(count) {
+      console.log(`Scrolling to: ${count}`);
+      this.$refs.listview.nativeView.scrollToIndex(count-1);
+      this.$refs.listview.nativeView.refresh();
+    }
+  },
+  beforeMount() {
+    this.checkAuthentication();
+  },
+  mounted() {
+    this.getTempData();
+  },
+  computed: {
+    token: {
+      get() {
+        return this.$store.state.token;
       },
-      info: {
-        get() {
-          return this.$store.state.info
-        },
-        set (newValue) {
-          return this.$store.dispatch('setInfo', newValue)
-        }
+      set(newValue) {
+        return this.$store.dispatch("setToken", newValue);
+      }
+    },
+    info: {
+      get() {
+        return this.$store.state.info;
+      },
+      set(newValue) {
+        return this.$store.dispatch("setInfo", newValue);
       }
     }
-  };
+  },
+  watch: {
+    message() {
+      if (this.message != "" || this.message.length > 0) {
+        this.tintColor = "#579ffb";
+      } else {
+        this.tintColor = "#000000";
+      }
+    }
+  }
+};
 </script>
 
 <style scoped lang="scss">
   @import "../app";
-
-  // End custom common variables
-
-  // Custom styles
-  .fa {
-    color: $accent-dark;
+  .send-form {
+    padding-top: 5;
+    padding-bottom: 3;
+    padding-right: 5;
+    padding-left: 5;
   }
-  .info {
-    font-size: 20;
+  .form {
+    padding-top: 3;
+    padding-bottom: 3;
+    padding-right: 10;
+    padding-left: 10;
+    border-radius: 30;
+    border-width: 1;
+    border-color: #fff;
   }
-  .time {
-    color: #000000;
-    font-size: 13;
-    margin-right: 5;
+  .send-form .form {
+    background: #fff;
+    color: #555;
+  }
+  .input {
+    placeholder-color: #777;
+    color: #222;
+    font-size: 14;
+  }
+  /*
+    * Component: Chat
+    * ----------------------
+  */
+  .msger {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    border-color: #ddd;
+    border-radius: 5;
+    box-shadow: 0 15 15 -5 rgba(0, 0, 0, 0.2);
+    background: url("~/images/chat_group_background.png") no-repeat;
+    position: fixed;
+    min-width: 100%;
+    min-height: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+  .msger-chat {
+    flex: 1;
+    padding: 6;
+  }
+  .action-bar-title {
+    horizontal-align: center;
+    color: #222;
   }
   .thumb {
     border-radius: 50%;
+    margin-right: 10;
   }
-  .muted {
-    font-weight: normal;
-    opacity: 0.4;
-    font-size: 20;
-  }
-  .unread {
-    font-size: 11;
-    padding-top: 2;
+  .online {
+    height: 10;
+    width: 10;
+    margin-right: 10;
+    background-color: #1fb833;
     border-radius: 50%;
-    background-color: #5bc0de;
-    margin-right: 5;
-    text-align: center;
-    min-width: 20;
-    min-height: 20;
-    color: $white;
+    display: inline-block;
   }
-  .unread.active,
-  .unread:active {
-    font-size: 11;
-    padding-top: 2;
+  .offline {
+    height: 10;
+    width: 10;
+    margin-right: 10;
+    background-color: #bbb;
     border-radius: 50%;
-    background-color: #31b0d5;
-    margin-right: 5;
-    text-align: center;
-    min-width: 20;
-    min-height: 20;
-    color: $white;
+    display: inline-block;
   }
-  .unread:hover {
-    font-size: 11;
-    padding-top: 2;
-    border-radius: 50%;
-    background-color: #31b0d5;
-    margin-right: 5;
-    text-align: center;
-    min-width: 20;
-    min-height: 20;
-    color: $white;
-  }
-  .unread:active:hover,
-  .unread.active:hover,
-  .unread:active:focus,
-  .unread.active:focus,
-  .unread:active.focus,
-  .unread.active.focus {
-    font-size: 11;
-    padding-top: 2;
-    border-radius: 50%;
-    background-color: #269abc;
-    margin-right: 5;
-    text-align: center;
-    min-width: 20;
-    min-height: 20;
-    color: $white;
-  }
-  .time {
-    &-unread {
-      color: #000000;
+  /**
+  * chat template
+  */
+  .msg {
+    display: flex;
+    width: 100%;
+    align-items: flex-end;
+    height: auto;
+    overflow: hidden;
+    .bubble {
+      display: inline-block;
+      width: auto;
+      horizontal-align: left;
+      height: auto;
+      background: #f5f5f5;
+      border-radius: 10;
+      border-top-left-radius: 0;
+      position: relative;
+      margin: 5 50 3 10;
+      box-shadow: 0 2 1 rgba(0, 0, 0, 0.2);
+      &.alt {
+        horizontal-align: right;
+        flex-direction: row-reverse;
+        margin: 5 10 3 50;
+        border-top-right-radius: 0;
+        border-top-left-radius: 10;
+        background: #DCF8C6;
+      }
+      .txt {
+        padding: 4 0 4 0;
+        display: inline-block;
+        .name {
+          font-weight: 600;
+          font-size: 11;
+          display: inline-block;
+          padding: 0 0 0 10;
+          margin: 0 0 2 0;
+          color: #3498db;
+          &.alt {
+            padding: 0 10 0 0;
+            color: #222;
+            horizontal-align: right;
+          }
+        }
+        .message {
+          padding: 0 10 0 10;
+          margin: auto;
+          color: #2b2b2b;
+          display: inline-block;
+          .timestamp {
+            font-size: 12;
+            margin-top: 2;
+            position: relative;
+            text-transform: uppercase;
+            color: #777;
+            font-weight: 600;
+          }
+        }
+      }
+      .bubble-arrow {
+        position: absolute;
+        left: -8;
+        top: 0;
+        &.alt {
+          bottom: 20;
+          left: auto;
+          right: 4;
+          horizontal-align: right;
+          &::after {
+            border-top-width: 15;
+            border-top-color: #DCF8C6;
+            transform: scaleX(-1);
+          }
+        }
+        &::after {
+          content: "";
+          position: absolute;
+          border-top-width: 15;
+          border-top-color: #f5f5f5;
+          border-left-color: transparent;
+          border-left-width: 15;
+          border-radius: 6 0 0 0;
+          width: 0;
+          height: 0;
+        }
+      }
     }
-    color: $white;
-    font-size: 12;
-    margin-right: 5;
   }
-  .list-group.list-group-item {
-    color: #212121;
+  .msg-text {
+    color: #222;
     font-size: 16;
-    margin: 0;
-    padding: 16;
-  }
-  .list-group .list-group-item Label {
-    vertical-align: center;
-  }
-  .list-group .list-group-item .thumb {
-    stretch: fill;
-    width: 50;
-    height: 50;
-    margin-right: 16;
-  }
-  .list-group .list-group-item.active {
-    background-color: #e0e0e0;
-  }
-  .list-group .list-group-item .list-group-item-text {
-    color: #757575;
-    font-size: 14;
   }
 </style>

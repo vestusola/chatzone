@@ -9,46 +9,40 @@
         </WrapLayout>
         <Label text="John Doe" class="action-bar-title" />
       </StackLayout>
-      <ActionItem @tap="" android.systemIcon="ic_menu_call" />
       <ActionItem android.position="popup" @tap="" text="Profile Info" />
       <ActionItem android.position="popup" @tap="" text="Block Friend" />
     </ActionBar>
 
     <StackLayout class="msger">
-      <!-- CHAT -->
-      <StackLayout class="msger-chat" ref="maindiv" :height="mainHeight">
-        <ListView for="item in items" height="100%" separatorColor="transparent">
+      <StackLayout class="msger-chat">
+        <ListView for="item in items" height="86%" separatorColor="transparent" ref="listview">
           <v-template>
             <StackLayout class="msg">
               <StackLayout :class="item.is_you ? 'bubble alt' : 'bubble'">
                 <StackLayout class="txt">
-                  <WrapLayout class="message" textWrap="true" orientation="horizontal">
+                  <StackLayout class="message">
                     <Label class="msg-text" :text="item.text" textWrap="true"></Label>
-                    <Label class="timestamp" horizontalAlignment="right">
-                      <FormattedString>
-                        <Span :text="item.when + ' '" />
-                        <Span v-if="item.status == 'delivered'" class="fas" color="#000000" text.decode="&#xf00c;" />
-                        <Span v-if="item.status == 'read'" class="fas" color="#579ffb" text.decode="&#xf00c;" />
-                      </FormattedString>
-                    </Label>
-                  </WrapLayout>
+                    <WrapLayout class="timestamp">
+                      <Label :text="item.when + ' '" />
+                      <Label v-if="item.status == 'delivered'" class="fas m-t-2" color="#000000" text.decode="&#xf00c;" />
+                      <Label v-if="item.status == 'read'" class="fas m-t-2" color="#579ffb" text.decode="&#xf00c;" />
+                    </WrapLayout>
+                  </StackLayout>
                 </StackLayout>
                 <StackLayout :class="item.is_you ? 'bubble-arrow alt' : 'bubble-arrow'"></StackLayout>
               </StackLayout>
             </StackLayout>
           </v-template>
         </ListView>
-        <!-- Conversations are loaded here -->
-      </StackLayout>
 
-      <!-- TextField form -->
-      <StackLayout class="send-form" ref="subdiv" :height="subHeight" verticalAlignment="bottom">
-        <GridLayout rows="auto" columns="*,auto" class="form">
-            <TextView hint="Type a message" @focus="textFieldFocus" @blur="removeFocus" row="0" col="0" textWrap="true" v-model="message" ref="textview" class="input input-sides" />
+        <StackLayout class="send-form" height="14%" ref="subdiv">
+          <GridLayout rows="auto" columns="*,auto" class="form">
+            <TextView hint="Type a message" row="0" col="0" textWrap="true" v-model="message" ref="textview" class="input input-sides" />
             <StackLayout row="0" col="1" @tap="sendMessage" verticalAlignment="center">
               <Image src="res://ic_send_black_24" :tintColor="tintColor" width="40" height="40"></Image>
             </StackLayout>
-        </GridLayout>
+          </GridLayout>
+        </StackLayout>
       </StackLayout>
     </StackLayout>
   </Page>
@@ -67,7 +61,6 @@ import { url } from "~/shared/api";
 import { mapGetters } from "vuex";
 
 import * as application from "tns-core-modules/application";
-import { AndroidApplication } from "tns-core-modules/application";
 import { isAndroid } from "tns-core-modules/platform";
 const applicationSettings = require("tns-core-modules/application-settings");
 export default {
@@ -75,8 +68,6 @@ export default {
     return {
       items: [],
       message: "",
-      mainHeight: "88%",
-      subHeight: "12%",
       tintColor: "#000000"
     };
   },
@@ -145,34 +136,16 @@ export default {
       );
     },
     sendMessage() {
-      console.log(`You typed: ${this.message}`);
       if (this.message == "") {
         return false;
       } else  {
         this.$refs.textview.nativeView.android.clearFocus();
         this.message = "";
-        this.removeFocus();
       }
     },
     goToHome() {
       this.$navigateTo(Home, {
         transition: "SlideRight"
-      });
-    },
-    textFieldFocus(args) {
-      this.$refs.maindiv.nativeView.height = { unit: "%", value: 0.79 };
-      this.$refs.subdiv.nativeView.height = { unit: "%", value: 0.21 };
-    },
-    removeFocus() {
-      this.$refs.textview.nativeView.dismissSoftInput();
-      this.$refs.maindiv.nativeView.height = { unit: "%", value: 0.88 };
-      this.$refs.subdiv.nativeView.height = { unit: "%", value: 0.12 };
-    },
-    onBackKeyPressed() {
-      console.log('I am clicked');
-      let vm = this;
-      application.android.on(AndroidApplication.activityBackPressedEvent, () => {
-        vm.removeFocus();
       });
     }
   },
@@ -202,7 +175,6 @@ export default {
   },
   watch: {
     message() {
-      console.log(this.message);
       if (this.message != "" || this.message.length > 0) {
         this.tintColor = "#579ffb";
       } else {
@@ -338,19 +310,16 @@ export default {
           display: inline-block;
           .timestamp {
             font-size: 12;
-            margin: 5 0 0 3;
-            margin-top: 5;
+            margin-top: 2;
             position: relative;
             text-transform: uppercase;
-            horizontal-align: right;
-            color: #999;
+            color: #777;
             font-weight: 600;
           }
         }
       }
       .bubble-arrow {
         position: absolute;
-        horizontal-align: left;
         left: -8;
         top: 0;
         &.alt {
