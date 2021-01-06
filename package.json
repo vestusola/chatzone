@@ -14,7 +14,7 @@
   "dependencies": {
     "@nstudio/nativescript-cardview": "^1.0.0",
     "@nstudio/nativescript-snackbar": "^1.1.2",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "elliptic": "^6.5.3",
     "lodash": "^4.17.20",
     "material-design-icons": "^3.0.1",
